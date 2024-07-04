@@ -633,4 +633,68 @@ class Juego(Sudoku):
             if not any(0 in fila for fila in self.sudoku):
                 print('¡Felicidades! Has completado el Sudoku.')
                 break
+            
+    def jugar_sin_vidas(self):
+        '''
+        Es la función de juego sin vidas, le muestra al usuario cun tablero de sudoku sin resolver
+        y conforme va obteniendo los valores que le ingrese el usuario, coloca los valores en el sudoku
+        y al final se evalúa la solución.
+    
+        Parametros
+        -------
+        no recibe parámetros
+
+        Returns
+        -------
+        no devuelve nada
+        '''
+        self.mostrar_sudoku_lineas(self.sudoku)
+        while True:
+            #Si se pide la solucion se resuelve con bactracking y se muestra, se termina el juego
+            entrada = input('Selecciona la casilla (fila, columna): ')
+            if entrada.lower() == 'solucion':
+                self.backtracking()
+                self.mostrar_sudoku_lineas(self.solucion_original)
+                break
+            #si no se ingresan valores validos vuelve a pedir una entrada
+            try:
+                fila, columna = [int(valor) for valor in entrada.split(',')]
+            except ValueError:
+                print('Entrada inválida. Intente de nuevo.')
+                continue
+
+            if not (0 <= fila < 9 and 0 <= columna < 9):
+                print('Posición inválida. Intente de nuevo.')
+                continue
+
+            if self.sudoku[fila][columna] != 0:
+                print('La casilla ya cuenta con un número. Intente de nuevo.')
+                continue
+
+            valor = int(input('Ingrese el número: '))
+            #Se revisa el valor ingresado y se guarda si este es correcto
+            self.sudoku[fila][columna] = valor
+            self.mostrar_sudoku_lineas(self.sudoku)
+            if not any(0 in fila for fila in self.sudoku):
+                fin = int(input('¿Has terminado?'))
+                if fin == 'si':
+                    break
+                else :
+                    continue
+        error = self.medir_error(self.sudoku)
+        if error == 0:
+            print('¡Felicidades! Has completado el Sudoku!')
+        else:
+            f'Tienes {error} de casillas inválidas.'
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         
