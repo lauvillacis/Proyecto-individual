@@ -521,7 +521,7 @@ class Sudoku:
     
 
 class Juego(Sudoku):
-    def __init__(self,sudoku,solucion,solucion_original,contador): 
+    def __init__(self,sudoku,solucion_backtracking,solucion_manual,solucion_original,contador): 
         '''
         Es el metodo constructor de los objetos de la clase, hereda todos los atributos
         de la clase sudoku
@@ -538,12 +538,11 @@ class Juego(Sudoku):
             Contiene la solución original
         contador: int
             Cuenta la cantidad de soluciones del sudoku
-        proceso: lista
         Returns
         -------
         No devuelve nada
         '''
-        Sudoku.__init__(self,sudoku,solucion,solucion_original,contador) 
+        Sudoku.__init__(self,sudoku,solucion_backtracking,solucion_manual,solucion_original,contador) 
     
      
    
