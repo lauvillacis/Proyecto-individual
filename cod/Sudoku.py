@@ -521,13 +521,49 @@ class Sudoku:
     
 
 class Juego(Sudoku):
-    def __init__(self,sudoku,solucion,solucion_original,contador, proceso): 
+    def __init__(self,sudoku,solucion,solucion_original,contador): 
+        '''
+        Es el metodo constructor de los objetos de la clase, hereda todos los atributos
+        de la clase sudoku
+        
+        Parametros
+        -------
+        sudoku: lista
+            Guarda el sudoku a resolver
+        solucion_backtracking: lista
+            Contiene la solución que devuelve el método backtracking
+        solucion_manual: lista
+            Contiene la solución que devuelve el método heurístico
+        solucion_original: lista
+            Contiene la solución original
+        contador: int
+            Cuenta la cantidad de soluciones del sudoku
+        proceso: lista
+        Returns
+        -------
+        No devuelve nada
+        '''
         Sudoku.__init__(self,sudoku,solucion,solucion_original,contador) 
-        self.__proceso = []
     
      
    
     def mostrar_sudoku_lineas(self, tablero, fila=-1, columna=-1):
+        '''
+        Imprime el sudoku con lineas para que se facilite la visualización
+        
+        Parametros
+        -------
+        tablero: lista
+            El sudoku que se quiere imprimir
+        fila: int
+            Es la fila de la casilla
+        columna: lista
+            Es la fila
+
+        Returns
+        -------
+        no devuelve nada, solo imprime
+        '''
         for i in range(9):
             if i % 3 == 0 and i != 0:
                 print(Fore.BLACK + "------+-------+------")
@@ -541,15 +577,30 @@ class Juego(Sudoku):
             print()
 
     def jugar(self):
+        '''
+        Es la función de juego con vidas, le muestra al usuario cun tablero de sudoku sin resolver
+        y conforme va obteniendo los valores que le ingrese el usuraio evalua el input.
+        Si el usuario se equivoca más de tres veces termina el juego.
+        A la hora de ingresar la casilla tiene que ser en el formato: fila,columna
+        Los números tienen que ser del 1 al 9
+        Parametros
+        -------
+        no recibe parámetros
+
+        Returns
+        -------
+        no devuelve nada
+        '''
         self.mostrar_sudoku_lineas(self.sudoku())
         vidas = 3
         while True:
+            #Si se pide la solucion se resuelve con bactracking y se muestra, se termina el juego
             entrada = input('Selecciona la casilla (fila, columna): ')
             if entrada.lower() == 'solucion':
                 self.backtracking()
                 self.mostrar_sudoku_lineas(self.solucion())
                 break
-
+            #si no se ingresan valores validos vuelve a pedir una entrada
             try:
                 fila, columna = [int(valor) for valor in entrada.split(',')]
             except ValueError:
@@ -565,6 +616,7 @@ class Juego(Sudoku):
                 continue
 
             valor = int(input('Ingrese el número: '))
+            #Se revisa el valor ingresado y se guarda si este es correcto
             self.backtracking()
             if self.solucion()[fila][columna] == valor:
                 self.sudoku()[fila][columna] = valor
@@ -574,11 +626,12 @@ class Juego(Sudoku):
                 tablero_incorrecto[fila][columna] = valor
                 self.mostrar_sudoku_lineas(tablero_incorrecto,fila,columna)
                 print('Valor incorrecto. Intente de nuevo.')
+                #se elimina una vida si se equivoca
                 vidas -= 1
                 if vidas == 0:
                     print('Te has quedado sin vidas. Fin del juego.')
                     break
-
+            #Si se rellenaron todas las casillas, se ganó
             if not any(0 in fila for fila in self.sudoku()):
                 print('¡Felicidades! Has completado el Sudoku.')
                 break
