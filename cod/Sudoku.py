@@ -525,16 +525,7 @@ class Juego(Sudoku):
         Sudoku.__init__(self,sudoku,solucion,solucion_original,contador) 
         self.__proceso = []
     
-    def mostrar_sudoku(self, tablero, fila = -1, columna = -1):
-        for i in range(9):
-            for j in range(9):
-                #Imprime en rojo la casilla seleccionada
-                if i == fila and j == columna:
-                    print(Fore.RED + f'{tablero[i][j]}', end=' ')
-                else:
-                    print(Fore.BLACK + f'{tablero[i][j]}', end=' ')
-            print()
-            
+     
    
     def mostrar_sudoku_lineas(self, tablero, fila=-1, columna=-1):
         for i in range(9):
