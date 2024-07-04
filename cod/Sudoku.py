@@ -590,14 +590,14 @@ class Juego(Sudoku):
         -------
         no devuelve nada
         '''
-        self.mostrar_sudoku_lineas(self.sudoku())
+        self.mostrar_sudoku_lineas(self.sudoku)
         vidas = 3
         while True:
             #Si se pide la solucion se resuelve con bactracking y se muestra, se termina el juego
             entrada = input('Selecciona la casilla (fila, columna): ')
             if entrada.lower() == 'solucion':
                 self.backtracking()
-                self.mostrar_sudoku_lineas(self.solucion())
+                self.mostrar_sudoku_lineas(self.solucion_original)
                 break
             #si no se ingresan valores validos vuelve a pedir una entrada
             try:
@@ -610,18 +610,17 @@ class Juego(Sudoku):
                 print('Posición inválida. Intente de nuevo.')
                 continue
 
-            if self.sudoku()[fila][columna] != 0:
+            if self.sudoku[fila][columna] != 0:
                 print('La casilla ya cuenta con un número. Intente de nuevo.')
                 continue
 
             valor = int(input('Ingrese el número: '))
             #Se revisa el valor ingresado y se guarda si este es correcto
-            self.backtracking()
-            if self.solucion()[fila][columna] == valor:
-                self.sudoku()[fila][columna] = valor
-                self.mostrar_sudoku_lineas(self.sudoku())
+            if self.solucion_original[fila][columna] == valor:
+                self.sudoku[fila][columna] = valor
+                self.mostrar_sudoku_lineas(self.sudoku)
             else:
-                tablero_incorrecto = copy.deepcopy(self.sudoku())
+                tablero_incorrecto = copy.deepcopy(self.sudoku)
                 tablero_incorrecto[fila][columna] = valor
                 self.mostrar_sudoku_lineas(tablero_incorrecto,fila,columna)
                 print('Valor incorrecto. Intente de nuevo.')
@@ -631,7 +630,7 @@ class Juego(Sudoku):
                     print('Te has quedado sin vidas. Fin del juego.')
                     break
             #Si se rellenaron todas las casillas, se ganó
-            if not any(0 in fila for fila in self.sudoku()):
+            if not any(0 in fila for fila in self.sudoku):
                 print('¡Felicidades! Has completado el Sudoku.')
                 break
         
