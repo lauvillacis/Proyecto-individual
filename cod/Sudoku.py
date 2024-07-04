@@ -576,7 +576,7 @@ class Juego(Sudoku):
                     print(Fore.BLACK + f'{tablero[i][j]}', end=' ')
             print()
 
-    def jugar(self):
+    def jugar_con_vidas(self):
         '''
         Es la función de juego con vidas, le muestra al usuario cun tablero de sudoku sin resolver
         y conforme va obteniendo los valores que le ingrese el usuraio evalua el input.
