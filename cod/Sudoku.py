@@ -1,17 +1,36 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import copy
 import random
-import time
 from colorama import Fore
 
 class Sudoku:
-    def __init__(self,sudoku,solucion,solucion_original,contador):
-        self.__sudoku = []
-        self.__solucion = []
-        self.__solucion_original = []
-        self.__contador = 0
+    def __init__(self,sudoku,solucion_backtracking,solucion_manual,solucion_original,contador):
+        '''
+        Es el metodo constructor de los objetos de la clase
         
+        Parametros
+        -------
+        sudoku: lista
+            Guarda el sudoku a resolver
+        solucion_backtracking: lista
+            Contiene la solución que devuelve el método backtracking
+        solucion_manual: lista
+            Contiene la solución que devuelve el método heurístico
+        solucion_original: lista
+            Contiene la solución original
+        contador: int
+            Cuenta la cantidad de soluciones del sudoku
+            
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__sudoku = sudoku #[]
+        self.__solucion_backtracking = solucion_backtracking #[]
+        self.__solucion_manual = solucion_manual #[]
+        self.__solucion_original = solucion_original #[]
+        self.__contador = contador #0
+        
+    @property
     def sudoku(self):
         '''
         Es el metodo get, para devolver el valor del atributo 'sudoku'
@@ -26,9 +45,10 @@ class Sudoku:
         '''
         return self.__sudoku
     
-    def solucion(self):
+    @property
+    def solucion_backtracking(self):
         '''
-        Es el metodo get, para devolver el valor del atributo 'sudoku'
+        Es el metodo get, para devolver la solución por medio de backtracking
         
         Parametros
         -------
@@ -38,11 +58,27 @@ class Sudoku:
         -------
         No devuelve nada
         '''
-        return self.__solucion
+        return self.__solucion_backtracking
     
+    @property
+    def solucion_manual(self):
+        '''
+        Es el metodo get, para devolver la solución con el método heurístico
+        
+        Parametros
+        -------
+        No lleva parametros explicitos pero se usa el objeto de la clase
+        
+        Returns
+        -------
+        No devuelve nada
+        '''
+        return self.__solucion_manual
+    
+    @property
     def solucion_original(self):
         '''
-        Es el metodo get, para devolver el valor del atributo 'sudoku'
+        Es el metodo get, para devolver la solución original
         
         Parametros
         -------
@@ -54,9 +90,10 @@ class Sudoku:
         '''
         return self.__solucion_original
     
+    @property
     def contador(self):
         '''
-        Es el metodo get, para devolver el valor del atributo 'sudoku'
+        Es el metodo get, para devolver el contador, que cuenta la cantidad de soluciones
         
         Parametros
         -------
@@ -67,11 +104,57 @@ class Sudoku:
         No devuelve nada
         '''
         return self.__contador
+    
+    
+    
+        #Str
+    def __str__(self):
+        '''
+        Devuelve lo que contenga el objeto
+        
+        Parametros
+        -------
+        No lleva parametros explicitos pero se usa el objeto de la clase
+        
+        Returns
+        -------
+        Devuelve una cadena de texto
+            En la cadena de texto se pone prosa y se imprime el valor de todos los 
+            atributos
 
-    def validar_casilla(self, valor, sudoku_evaluado, i, j):
+        '''
+        return f'El sudoku es: {self.__sudoku}, Su solución es: {self.__solucion_original}\n Su solución con backtracking es: {self.__solucion_backtracking} \
+        \n Su solución con el método heurístico es: {self.__solucion_manual} \n \
+        el contador que se utiliza temporalmente en algunos métodos es: {self.__contador}'
+    
+    
+
+    
+    
+    
+    
+    def validar_casilla(self, valor, sudoku_evaluado, fila, columna):
+        '''
+        Dada una casilla, valida si el valor propuesto puede ir o no en la casilla
+        
+        Parametros
+        -------
+        valor: int
+            valor que se está intentando poner en la casilla
+        sudoku_evaluado: lista
+            corresponde al sudoku que se quiere verificar
+        fila: int
+            corresponde a la fila de la casilla
+        columna:int
+            corresponde a la columna de la casilla
+
+        Returns
+        -------
+        Boolean: indica si el valor puede o no puede ir en la casilla
+        '''
         #Se encuentra el bloque en el que se encuentra
-        bloque_i = i // 3
-        bloque_j = j // 3
+        bloque_i = fila // 3
+        bloque_j = columna // 3
 
         #Se revisa que no esté el número en el bloque
         for b_i in range(bloque_i * 3, bloque_i * 3 + 3):
@@ -79,82 +162,125 @@ class Sudoku:
                 if sudoku_evaluado[b_i][b_j] == valor:
                     return False
         #Se revisa que no esté el número en la fila
-        for columna in range(0, 9):
-            if sudoku_evaluado[i][columna] == valor:
+        for j in range(0, 9):
+            if sudoku_evaluado[fila][j] == valor:
                 return False
 
         #Se revisa que no esté el número en la columna
-        for fila in range(0, 9):
-            if sudoku_evaluado[fila][j] == valor:
+        for i in range(0, 9):
+            if sudoku_evaluado[i][columna] == valor:
                 return False
 
         return True
 
     def backtracking(self):
+        '''
+        Dado un tablero de sudoku, se resuelve el sudoku con el método bactracking
+        
+        Parametros
+        -------
+        no recibe nada, ya que modifica el atributo de la clase: solucion_backtracking
+
+        Returns
+        -------
+        no devuelve nada, solo modifica el atribuo solucion_backtracking
+        '''
         #Se itera sobre todas las casillas
         for row in range(9):
             for col in range(9):
                 #Si la casilla es cero(está vacía), intento llenarla
-                if self.__solucion[row][col] == 0:
+                if self.__solucion_backtracking[row][col] == 0:
                     #Se itera sobre todos los posibles valores para cada casilla
                     for valor in range(1, 10):
                         #Si el número es válido
-                        if self.validar_casilla(valor, self.__solucion, row, col):
+                        if self.validar_casilla(valor, self.__solucion_backtracking, row, col):
                             #Rellena la casilla con el número 
-                            self.__solucion[row][col] = valor
+                            self.__solucion_backtracking[row][col] = valor
                             #Llama a la función backtracking de nuevo, si esta devuelve True es porque se encontró solución
                             if self.backtracking(): #(self.__solucion):
                                 return True
                             #Si no se encontró una solución, se resetea la casilla
-                            self.__solucion[row][col] = 0
+                            self.__solucion_backtracking[row][col] = 0
                     #Si ningún número funcionó devuelve Falso y se devuelve         
                     return False
         #Ya no hay más casillas vacías y resolvió el sudoku  
         return True
 
 
-    def contador_soluciones(self, sudoku_evaluado, i, j): #Es mejor hacer un atributo copia o meter como parámetro otra vez la matriz?
+    def contador_soluciones(self, sudoku_evaluado, fila, columna): 
+        '''
+        Cuenta la cantidad de soluciones que tiene un sudoku dado
+        
+        Parametros
+        -------
+        sudoku_evaluado: lista
+            Recibe el sudoku a evaluar 
+        fila: int
+            El número de fila
+        columna: int
+            El número de columna
+
+        Returns
+        -------
+        no devuelve nada, solo modifica el atribuo contador
+        '''
         #Itera sobre todas las casillas
-        if j > 8:
-            j = 0
-            i += 1
-            if i > 8:
+        if columna > 8:
+            columna = 0
+            fila += 1
+            if fila > 8:
                 #Si ya se llegó a la última casilla, significa que se encontró una solución
                 self.__contador += 1
                 return
         #Si la casilla es distinta de cero    
-        if sudoku_evaluado[i][j] != 0:
+        if sudoku_evaluado[fila][columna] != 0:
             #Llama recursivamente a la función en la siguiente casilla
-            self.contador_soluciones(sudoku_evaluado,i, (j + 1))
+            self.contador_soluciones(sudoku_evaluado,fila, (columna + 1))
         else:
             #Se prueban todos los valores para la casilla vacía
             for valor in range(1, 10):
                 #Si el número es válido en la casilla
-                if self.validar_casilla(valor, sudoku_evaluado, i, j):
+                if self.validar_casilla(valor, sudoku_evaluado, fila, columna):
                     #Se cambia el valor de la casilla
-                    sudoku_evaluado[i][j] = valor
+                    sudoku_evaluado[fila][columna] = valor
                     #Se llama recursivamente al contador de soluciones en la siguiente casilla
-                    self.contador_soluciones(sudoku_evaluado,i, (j + 1))
+                    self.contador_soluciones(sudoku_evaluado, fila, (columna + 1))
                     #Si no es una solución válida, devuelve el valor de la casilla
-                    sudoku_evaluado[i][j] = 0
+                    sudoku_evaluado[fila][columna] = 0
                     #Si el contador es mayor a uno, queire decir que la solución no es única
                     if self.__contador > 1:
                         #Se sale de la función
                         return
 
 
-    def generador(self, grid, i, j):
+    def generador(self, tablero, fila, columna):
+        '''
+        Genera un sudoku desde cero, con el método backtracking
+        
+        Parametros
+        -------
+        sudoku_evaluado: lista
+            Recibe el sudoku a evaluar 
+        fila: int
+            El número de fila
+        columna: int
+            El número de columna
+
+        Returns
+        -------
+        no devuelve nada, solo modifica el parámetro tablero
+        '''
         numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         #Itera sobre los posibles valores para cada casilla
-        if j > 8:
-            j = 0
-            i += 1
-            if i > 8:
+        if columna > 8:
+            columna = 0
+            fila += 1
+            if fila > 8:
                 return True
         #Si la casilla es distinta de cero
-        if grid[i][j] != 0:
+        if tablero[fila][columna] != 0:
             #Lama recursivamente a la función en la siguiente casilla
-            if self.generador(grid, i, (j + 1)):
+            if self.generador(tablero, fila, (columna + 1)):
                 return True
         else:
             # Desordena de manera aleatorio a los números
@@ -162,18 +288,30 @@ class Sudoku:
             #Itera sobre todos los valores de números
             for valor in numeros:
                 # revisa si se puede poner en la casilla
-                if self.validar_casilla( valor,grid, i, j):
+                if self.validar_casilla( valor,tablero, fila, columna):
                     #Se llena la casilla 
-                    grid[i][j] = valor
+                    tablero[fila][columna] = valor
                     #Sigue a la siguiente casilla
-                    if self.generador(grid, i, (j + 1)):
+                    if self.generador(tablero, fila, (columna + 1)):
                         return True
                     #Si el valor con el que se está probando no funciona, resetea la casilla
-                    grid[i][j] = 0
+                    tablero[fila][columna] = 0
         return False
 
 
     def generador_sudoku_resuelto(self):
+        '''
+        Genera un sudoku resuelto
+        
+        Parametros
+        -------
+        no lleva parámetros
+
+        Returns
+        -------
+        sudoku_resuelto: lista
+            Devuelve el sudoku resuelto
+        '''
         # se inicializa el sudoku
         sudoku_resuelto= []
         for i in range(9):
@@ -182,21 +320,32 @@ class Sudoku:
         self.generador(sudoku_resuelto, 0, 0)
         return sudoku_resuelto
 
-    def generador_sudoku(self, level=2):
+    def generador_sudoku(self, nivel=2):
+        '''
+        Genera un tablero de sudoku según la dificultad establecida
+        
+        Parametros
+        -------
+        nivel: int
+            Es la dificultad del sudko que varía desde 1 a 5, donde 1 es el más fácil y 5 el más difícil
+        Returns
+        -------
+        no devuelve nada, solo modifica los atributos sudoku, solucion_backtracking y solución_manual
+        '''
         # se genera un sudoku resuelto
         sudoku_resuelto = self.generador_sudoku_resuelto()
         #se guarda el sudoku resuelto 
         self.__solucion_original = copy.deepcopy(sudoku_resuelto)
         #Se establecen los niveles de dificultad, quita más números entre mayor sea el nivel
-        if level == 1:
+        if nivel == 1:
             casilla_a_remover = random.randint(32, 38)
-        if level == 2:
+        if nivel == 2:
             casilla_a_remover = random.randint(40, 46)
-        if level == 3:
+        if nivel == 3:
             casilla_a_remover = random.randint(48, 52)
-        if level == 4:
+        if nivel == 4:
             casilla_a_remover = random.randint(54, 56)
-        if level == 5:
+        if nivel == 5:
             casilla_a_remover = random.randint(59, 61)
 
         # se hace una lista con todas las posibles casillas
@@ -227,66 +376,148 @@ class Sudoku:
                 casilla_a_remover -= 1
             #Devuelve el contador de soluciones a cero
             self.__contador = 0
-        #self.visualizar(sudoku_resuelto)
+        #Se guarda el sudoku obtenido para resolverlo posteriormente
         self.__sudoku = copy.deepcopy(sudoku_resuelto)
-        self.__solucion = sudoku_resuelto
-
+        self.__solucion_backtracking = copy.deepcopy(sudoku_resuelto)
+        self.__solucion_manual = copy.deepcopy(sudoku_resuelto)
     
     def visualizar(self):
-        print('El sudoku original es:\n')
-        for i in range(9):
-            print(self.__sudoku[i])
-        print("\n")
-        print('El sudoku resuelto con backtracking es:\n')
-        for i in range(9):
-            print(self.__solucion[i])
-        print("\n")
+        print('El tablero del sudoku es:\n')
+        self.imprimir_sudoku(self.__sudoku)
         print('La solución original es:\n')
-        for i in range(9):
-            print(self.__solucion_original[i])
-        print("\n")
-        
+        self.imprimir_sudoku(self.__solucion_original)
+        print('El sudoku resuelto con backtracking es:\n')
+        self.imprimir_sudoku(self.__solucion_backtracking)
+        print('El sudoku resuelto con el método heurístico es:\n')
+        self.imprimir_sudoku(self.__solucion_manual)
         
         
     def posibles_valores(self, fila, columna):
+        '''
+        Evalúa según la fila, columna y bloque de la casilla en cuestión, todos los
+        posibles valores que pueden ir en la casilla
+        
+        Parametros
+        -------
+        fila: int
+            El número de fila
+        columna: int
+            El número de columna
+
+        Returns
+        -------
+        no devuelve nada, solo modifica el la solución sudoku
+        '''
+        #Si la casilla es distinta de cero no evalúa nada
         if self.__solucion_manual[fila][columna] != 0:
             return
-        #Se encuentra el bloque en el que se encuentra
-
+        #Se consiguen los valores del bloque
         bloque_i = (fila // 3) * 3
-        bloque_j = (columna // 3) * 3        
+        bloque_j = (columna // 3) * 3  
+        #Se guardan los posibles candidatos como un conjunto
         candidatos = set(range(1, 10))
-
+        
         #Se revisa que no esté el número en el bloque
         for b_i in range(bloque_i, bloque_i + 3):
             for b_j in range(bloque_j, bloque_j + 3):
-                if self.__solucion_manual[b_i][b_j] in candidatos:
+                if isinstance(self.__solucion_manual[b_i][b_j], int) and self.__solucion_manual[b_i][b_j] in candidatos:
                     candidatos.remove(self.__solucion_manual[b_i][b_j])
 
         #Se revisa que no esté el número en la fila
         for columnas in range(0, 9):
-            if self.__solucion_manual[fila][columnas] in candidatos:
+            if isinstance(self.__solucion_manual[fila][columnas], int) and self.__solucion_manual[fila][columnas] in candidatos:
                 candidatos.remove(self.__solucion_manual[fila][columnas])
 
 
         #Se revisa que no esté el número en la columna
         for filas in range(0, 9):
-            if self.__solucion_manual[filas][columna] in candidatos:
+            if isinstance(self.__solucion_manual[filas][columna], int) and self.__solucion_manual[filas][columna] in candidatos:
                 candidatos.remove(self.__solucion_manual[filas][columna])
-                    
+        #Se guarda en la casilla dada una lista con los posibles valores            
         self.__solucion_manual[fila][columna] = list(candidatos)
-        for i in range(9):
-            print(self.__solucion_manual[i])
-        print("\n")
-        return
+        return 
     
-    
-    #Str
-    def __str__(self):
+
         
-        return f'El SUDOKU es: {self.__sudoku}, SU SOLUCION ES:{self.__solucion},\n SU SOLUCION ORIGINAL ES: {self.__solucion_original} '
+    def valores_basic_filler(self):
+        '''
+        Calcula la intersección para cada casilla y hay un único valor entonces lo agrega en la solución
+        
+        Parametros
+        -------
+        No lleva parámetros
+
+        Returns
+        -------
+        no devuelve nada, solo modifica el la solución manual de la clase
+        '''
+        #Se mide el error cómo la cantidad de datos que son diferentes al de la solución
+        faltantes = self.medir_error(self.__solucion_manual)
+        faltantes_anteriores = 0
+        contador = 0
+        #Se genera un while que mientras la cantidad de números diferentes cambie, entonces que siga ejecutandose
+        while faltantes_anteriores != faltantes:
+            contador +=1
+            if contador != 1:
+                #Las listas se convierten a ceros para volver a calcular los posibles valores
+                for i in range(0,9):
+                    for j in range(0,9):
+                        if type(self.__solucion_manual[i][j]) == list:
+                            self.__solucion_manual[i][j] = 0
+            for i in range(0,9):
+                for j in range(0,9):
+                    self.posibles_valores(i,j)
+                    if type(self.__solucion_manual[i][j]) == list and len(self.__solucion_manual[i][j]) == 1:
+                        self.__solucion_manual[i][j] = self.__solucion_manual[i][j][0]
+            faltantes_anteriores = faltantes
+            faltantes = self.medir_error(self.__solucion_manual)
+        self.imprimir_sudoku(self.__solucion_manual)
+        #Si sale TRUE se resolvió el sudoku con éxito, si no, no se ha llegado a la solución
+        print(self.__solucion_manual == self.__solucion_original)
+        return 
+        
+        
+    def imprimir_sudoku(self, sudoku_a_imprimir):
+        '''
+        Imprime el sudoku que se desee
+        
+        Parametros
+        -------
+        sudoku_a_imprimir: lista
+            El sudoku que se quiere imprimir
+
+        Returns
+        -------
+        no devuelve nada, solo imprime el sudoku
+        '''
+        for fila in sudoku_a_imprimir:
+            print(" ".join(str(num) if num != 0 else '.' for num in fila))
+        print("\n")
+        
+    def medir_error(self, sudoku_evaluado):
+        '''
+        Cuenta la cantidad de valores diferentes a la solucion original que tiene el sudoku evaluado 
+        
+        Parametros
+        -------
+        sudoku_evaluado: lista
+            El sudoku que se quiere revisar
+
+        Returns
+        -------
+        errores: int
+            Es la cantidad de valores diferentes que tiene el sudoku que se está evaluando
+        '''
+        errores = 0
+        for i in range(0,9):
+                for j in range(0,9):
+                    #Si el valor es una lista o es diferente al correcto, suma 1 a la cantidad de errores
+                    if type(sudoku_evaluado[i][j]) == list or sudoku_evaluado[i][j] != self.__solucion_original[i][j] :
+                        errores += 1
+        return errores
     
-    
+
+  
     
 
 class Juego(Sudoku):
