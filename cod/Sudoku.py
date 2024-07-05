@@ -526,18 +526,18 @@ class Sudoku:
         #Se revisa que no esté el número en el bloque
         for b_i in range(bloque_i, bloque_i + 3):
             for b_j in range(bloque_j, bloque_j + 3):
-                if isinstance(self.__solucion_manual[b_i][b_j], int) and self.__solucion_manual[b_i][b_j] in candidatos:
+                if type(self.__solucion_manual[b_i][b_j]) == int and self.__solucion_manual[b_i][b_j] in candidatos:
                     candidatos.remove(self.__solucion_manual[b_i][b_j])
 
         #Se revisa que no esté el número en la fila
         for columnas in range(0, 9):
-            if isinstance(self.__solucion_manual[fila][columnas], int) and self.__solucion_manual[fila][columnas] in candidatos:
+            if type(self.__solucion_manual[fila][columnas]) == int and self.__solucion_manual[fila][columnas] in candidatos:
                 candidatos.remove(self.__solucion_manual[fila][columnas])
 
 
         #Se revisa que no esté el número en la columna
         for filas in range(0, 9):
-            if isinstance(self.__solucion_manual[filas][columna], int) and self.__solucion_manual[filas][columna] in candidatos:
+            if type(self.__solucion_manual[filas][columna]) == int  and self.__solucion_manual[filas][columna] in candidatos:
                 candidatos.remove(self.__solucion_manual[filas][columna])
         #Se guarda en la casilla dada una lista con los posibles valores            
         self.__solucion_manual[fila][columna] = list(candidatos)
