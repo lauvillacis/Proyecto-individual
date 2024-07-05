@@ -106,6 +106,82 @@ class Sudoku:
         return self.__contador
     
     
+    #Set
+    #En realidad los setters no se necesitan porque la clase crea el tablero
+    @sudoku.setter
+    def sudoku(self, nuevo_sudoku):
+        '''
+        Es el metodo set, para establecer el valor del atributo 'sudoku'
+        
+        Parametros
+        -------
+        nuevo_sudoku: lista
+            Esto es el sudoku que se queire asignar
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__sudoku = nuevo_sudoku
+        
+    @solucion_backtracking.setter
+    def solucion_backtracking(self, nuevo_solucion_backtracking):
+        '''
+        Es el metodo set, para establecer el valor del atributo 'solucion_backtracking'
+        
+        Parametros
+        -------
+        nuevo_solucion_backtracking: lista
+            Esto es la solucion nueva de backtracking que se queire asignar
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__solucion_backtracking = nuevo_solucion_backtracking
+        
+    @solucion_manual.setter
+    def solucion_manual(self, nuevo_solucion_manual):
+        '''
+        Es el metodo set, para establecer el valor del atributo 'solucion_manual'
+        
+        Parametros
+        -------
+        nuevo_solucion_manual: lista
+            Esto es el sudoku que se quiere asignar
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__solucion_manual = nuevo_solucion_manual
+        
+    @solucion_original.setter
+    def solucion_original(self, nuevo_solucion_original):
+        '''
+        Es el metodo set, para establecer el valor del atributo 'solucion_original'
+        
+        Parametros
+        -------
+        nuevo_solucion_original: lista
+            Esto es el sudoku que se quiere asignar
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__solucion_original = nuevo_solucion_original
+        
+    @contador.setter
+    def contador(self, nuevo_contador):
+        '''
+        Es el metodo set, para establecer el valor del atributo 'contador'
+        
+        Parametros
+        -------
+        nuevo_contador: int
+            Esto es el sudoku que se quiere asignar
+        Returns
+        -------
+        No devuelve nada
+        '''
+        self.__contador = nuevo_contador
     
         #Str
     def __str__(self):
@@ -126,12 +202,7 @@ class Sudoku:
         return f'El sudoku es: {self.__sudoku}, Su solución es: {self.__solucion_original}\n Su solución con backtracking es: {self.__solucion_backtracking} \
         \n Su solución con el método heurístico es: {self.__solucion_manual} \n \
         el contador que se utiliza temporalmente en algunos métodos es: {self.__contador}'
-    
-    
 
-    
-    
-    
     
     def validar_casilla(self, valor, sudoku_evaluado, fila, columna):
         '''
