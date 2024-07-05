@@ -276,7 +276,41 @@ class Sudoku:
                     return False
         #Ya no hay más casillas vacías y resolvió el sudoku  
         return True
+    
+    def backtracking_para_utilizar(self, sudoku_evaluado):
+        '''
+        Dado un tablero de sudoku, se resuelve el sudoku indicado con el método bactracking
+        
+        Parametros
+        -------
+        sudoku_evaluado: lista
+            El sudoku que se quiere resolver con backtracking
 
+        Returns
+        -------
+        no devuelve nada, solo modifica el sudoku_evaluado
+        '''
+        #Se itera sobre todas las casillas
+        for fila in range(9):
+            for columna in range(9):
+                #Si la casilla es cero(está vacía), intento llenarla
+                if sudoku_evaluado[fila][columna] == 0:
+                    #Se itera sobre todos los posibles valores para cada casilla
+                    for valor in range(1, 10):
+                        #Si el número es válido
+                        if self.validar_casilla(valor, sudoku_evaluado, fila, columna):
+                            #Rellena la casilla con el número 
+                            sudoku_evaluado[fila][columna] = valor
+                            #Llama a la función backtracking de nuevo, si esta devuelve True es porque se encontró solución
+                            if self.backtracking_para_utilizar(sudoku_evaluado): #(self.__solucion):
+                                return True
+                            #Si no se encontró una solución, se resetea la casilla
+                            sudoku_evaluado[fila][columna] = 0
+                    #Si ningún número funcionó devuelve Falso y se devuelve         
+                    return False
+        #Ya no hay más casillas vacías y resolvió el sudoku  
+        return True
+    
 
     def contador_soluciones(self, sudoku_evaluado, fila, columna): 
         '''
@@ -543,7 +577,6 @@ class Sudoku:
                         self.__solucion_manual[i][j] = self.__solucion_manual[i][j][0]
             faltantes_anteriores = faltantes
             faltantes = self.medir_error(self.__solucion_manual)
-        self.imprimir_sudoku(self.__solucion_manual)
         #Si sale TRUE se resolvió el sudoku con éxito, si no, no se ha llegado a la solución
         print(self.__solucion_manual == self.__solucion_original)
         return 
@@ -561,6 +594,7 @@ class Sudoku:
         -------
         no devuelve nada, solo modifica el la solución manual de la clase
         '''
+        self.solucion_manual = copy.deepcopy(self.sudoku)
         #Se utiliza Basic Filler
         self.valores_basic_filler()
         #Si no se llega a una solución, se aplica backtracking
@@ -573,40 +607,7 @@ class Sudoku:
             self.imprimir_sudoku(self.__solucion_manual)
         print(self.__solucion_manual == self.__solucion_original)
         
-    def backtracking_para_utilizar(self, sudoku_evaluado):
-        '''
-        Dado un tablero de sudoku, se resuelve el sudoku indicado con el método bactracking
-        
-        Parametros
-        -------
-        sudoku_evaluado: lista
-            El sudoku que se quiere resolver con backtracking
 
-        Returns
-        -------
-        no devuelve nada, solo modifica el sudoku_evaluado
-        '''
-        #Se itera sobre todas las casillas
-        for fila in range(9):
-            for columna in range(9):
-                #Si la casilla es cero(está vacía), intento llenarla
-                if sudoku_evaluado[fila][columna] == 0:
-                    #Se itera sobre todos los posibles valores para cada casilla
-                    for valor in range(1, 10):
-                        #Si el número es válido
-                        if self.validar_casilla(valor, sudoku_evaluado, fila, columna):
-                            #Rellena la casilla con el número 
-                            sudoku_evaluado[fila][columna] = valor
-                            #Llama a la función backtracking de nuevo, si esta devuelve True es porque se encontró solución
-                            if self.backtracking_para_utilizar(sudoku_evaluado): #(self.__solucion):
-                                return True
-                            #Si no se encontró una solución, se resetea la casilla
-                            sudoku_evaluado[fila][columna] = 0
-                    #Si ningún número funcionó devuelve Falso y se devuelve         
-                    return False
-        #Ya no hay más casillas vacías y resolvió el sudoku  
-        return True
-    
         
     def imprimir_sudoku(self, sudoku_a_imprimir):
         '''
@@ -817,7 +818,7 @@ class Juego(Sudoku):
         if error == 0:
             print('¡Felicidades! Has completado el Sudoku!')
         else:
-            f'Tienes {error} de casillas inválidas.'
+            print(f'Tienes {error} casillas inválidas.')
             
             
             
