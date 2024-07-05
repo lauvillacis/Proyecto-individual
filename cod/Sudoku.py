@@ -257,21 +257,21 @@ class Sudoku:
         no devuelve nada, solo modifica el atribuo solucion_backtracking
         '''
         #Se itera sobre todas las casillas
-        for row in range(9):
-            for col in range(9):
+        for fila in range(9):
+            for columna in range(9):
                 #Si la casilla es cero(está vacía), intento llenarla
-                if self.__solucion_backtracking[row][col] == 0:
+                if self.__solucion_backtracking[fila][columna] == 0:
                     #Se itera sobre todos los posibles valores para cada casilla
                     for valor in range(1, 10):
                         #Si el número es válido
-                        if self.validar_casilla(valor, self.__solucion_backtracking, row, col):
+                        if self.validar_casilla(valor, self.__solucion_backtracking, fila, columna):
                             #Rellena la casilla con el número 
-                            self.__solucion_backtracking[row][col] = valor
+                            self.__solucion_backtracking[fila][columna] = valor
                             #Llama a la función backtracking de nuevo, si esta devuelve True es porque se encontró solución
                             if self.backtracking(): #(self.__solucion):
                                 return True
                             #Si no se encontró una solución, se resetea la casilla
-                            self.__solucion_backtracking[row][col] = 0
+                            self.__solucion_backtracking[fila][columna] = 0
                     #Si ningún número funcionó devuelve Falso y se devuelve         
                     return False
         #Ya no hay más casillas vacías y resolvió el sudoku  
@@ -390,6 +390,7 @@ class Sudoku:
         # se genera el sudoku usando backtracking y se guarda en el sudoku nuevo
         self.generador(sudoku_resuelto, 0, 0)
         return sudoku_resuelto
+    
 
     def generador_sudoku(self, nivel=2):
         '''
@@ -623,6 +624,7 @@ class Sudoku:
         for fila in sudoku_a_imprimir:
             print(" ".join(str(num) if num != 0 else '.' for num in fila))
         print("\n")
+        
         
     def medir_error(self, sudoku_evaluado):
         '''
